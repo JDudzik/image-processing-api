@@ -3,7 +3,10 @@ import 'tsconfig-paths/register';
 import express from 'express';
 import logger from 'morgan';
 import helmet from 'helmet';
+import dotenv from 'dotenv';
 import v1 from 'v1';
+
+dotenv.config();
 
 const app = express();
 const port = 3001;
@@ -18,6 +21,11 @@ app.get('/*', (_req, res) => {
 });
 
 
-app.listen(port, () => {
-  return console.log(`server is listening on ${port}`);
-});
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => {
+    return console.log(`server is listening on ${port}`);
+  });
+}
+
+
+export default app;
