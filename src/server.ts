@@ -9,7 +9,7 @@ import v1 from 'v1';
 dotenv.config();
 
 const app = express();
-const port = 3001;
+const port = process.env.PORT || 3001;
 
 app.use(logger('dev'));
 app.use(helmet());
