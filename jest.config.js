@@ -16,7 +16,7 @@ module.exports = {
   ],
   moduleNameMapper: {
     "^src(.*)": "<rootDir>/src$1",
-    "^(controllers|tests|v1)(.*)": "<rootDir>/src/$1$2",
+    "^(controllers|tests|utils|v1)(.*)": "<rootDir>/src/$1$2",
   },
   preset: 'ts-jest',
   testEnvironment: 'node',
