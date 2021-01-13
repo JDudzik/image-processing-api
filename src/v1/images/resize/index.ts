@@ -8,10 +8,10 @@ const resize = [
     query: {
       type: "object",
       properties: {
-        width: {type: 'number'},
-        height: {type: 'number'},
-        format: {type: 'string', pattern: '^(?:jpeg|png|webp)$' },
-        quality: {type: 'number', minimum: 1, maximum: 100},
+        width: {type: 'string', pattern: '^\\d*$'}, // All numbers
+        height: {type: 'string', pattern: '^\\d*$'}, // All numbers
+        format: {type: 'string', pattern: '^(?:jpeg|png|webp)$' }, // Only specific words
+        quality: {type: 'string', pattern: '^(100|[1-9][0-9]|[1-9])$'}, // Between 1 and 100
       },
       additionalProperties: false,
     },
