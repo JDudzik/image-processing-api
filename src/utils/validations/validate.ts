@@ -1,4 +1,3 @@
-import express from 'express';
 import Ajv, { ErrorObject } from "ajv";
 
 interface AnyObject {[key: string]: any}
