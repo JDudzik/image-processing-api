@@ -13,7 +13,7 @@ interface ValidateKeysOptions {
 }
 
 
-const removeKeys = (payload: AnyObject, keys: string[]): AnyObject => {
+export const removeKeys = (payload: AnyObject, keys: string[]): AnyObject => {
   const objKeys = Object.keys(payload);
   const filteredKeys = objKeys.filter(key => !keys.some(prop => key === prop));
 
@@ -23,7 +23,7 @@ const removeKeys = (payload: AnyObject, keys: string[]): AnyObject => {
 };
 
 
-const stringMatches = (string: string, matches: string[] = []): FailedValidation | boolean => {
+export const stringMatches = (string: string, matches: string[] = []): FailedValidation | boolean => {
   if (typeof string !== 'string') {
     return {
       status: 'VALUE_IS_NOT_A_STRING',
@@ -45,7 +45,7 @@ const stringMatches = (string: string, matches: string[] = []): FailedValidation
 };
 
 
-const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptions = {}): FailedValidation | boolean => {
+export const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptions = {}): FailedValidation | boolean => {
   const {
     requiredKeys = [],
     optionalKeys = [],
@@ -83,9 +83,10 @@ const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptions = {}
 };
 
 
+export const isNumber = (string: any) => {
+  if (typeof string !== "string") {
+    return false;
+  }
 
-export default {
-  removeKeys,
-  validateKeys,
-  stringMatches,
-};
+  return !isNaN(string as any) && !isNaN(parseFloat(string))
+}
