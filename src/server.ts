@@ -18,26 +18,13 @@ app.use(logger('dev'));
 app.use(helmet());
 app.use(compression());
 
-
-
-
-
-
-
 app.use('/v1', v1);
 
 app.get('/', (_req, res) => {
   res.send(`Welcome to the Image Processing API!`);
 });
 
-
-
-
-
-// Error handler for valication errors
 app.use(catchValidationErrors);
-
-
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
