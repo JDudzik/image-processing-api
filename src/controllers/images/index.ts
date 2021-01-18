@@ -18,16 +18,24 @@ interface ResolvedImage {
   fromCache: boolean,
 };
 
+
+/********************/
+/* Internal Methods */
+/********************/
+
 const createDirIfNone = (dir: string) => !fs.existsSync(dir) && fs.mkdirSync(dir);
+
 
 const fileExists = async (path: string): Promise<boolean> => await fs.promises.access(path)
   .then(() => true)
   .catch(() => false);
 
+
 const queryValue = (key: string, value: any, isFirst: boolean = false): string => {
   if (!value) { return ''; }
   return `${isFirst ? '?' : '&'}${key}=${value}`;
 }
+
 
 const stringifyModifiers = (imageModifiers: ImageModifiers = {}): string => {
   return [
@@ -38,28 +46,37 @@ const stringifyModifiers = (imageModifiers: ImageModifiers = {}): string => {
 }
 
 
-const modifyImage = (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): any => {
+const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): Promise<any> => {
   const width = imageModifiers.width ? parseInt(imageModifiers.width, 10) : undefined;
   const height = imageModifiers.height ? parseInt(imageModifiers.height, 10) : undefined;
   const quality = imageModifiers.quality ? parseInt(imageModifiers.quality, 10) : undefined;
   const {fileName, fileType, modifierString} = imageData.pathData;
   const newImagePath = `images/modified/${fileName}${modifierString}.${fileType}`;
 
-  return sharp(imageData.path)
+  await sharp(imageData.path)
     .resize(width, height)
     .jpeg({
       quality: quality || 75,
       force: false,
     })
     .toFile(newImagePath)
-    .then( data => { console.log('data:', data, newImagePath); })
+    .catch((err) => { throw new Error(err); })
+
+  console.log('newImagePath:', newImagePath);
+  return newImagePath;
 }
 
+
+
+/******************/
+/* Public Methods */
+/******************/
 
 const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Promise<ResolvedImage | undefined> => {
   const modifiedDir = 'images/modified';
   const baseDir = 'images/base';
-  const [, fileName, fileType] = file.match(/(.*)\.(\w*)$/) as RegExpMatchArray;
+
+  const [, fileName, fileType] = file.match(/^(.+)(\.\w+)$/) as RegExpMatchArray;
   const stringifiedModifiers = stringifyModifiers(imageModifiers);
 
   // Attempt to find the image in the modified folder.
@@ -101,11 +118,20 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
 
 const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): Promise<any> => {
   const imageData = await findImage(path, imageModifiers);
-  console.log('imageData:', imageData);
+
+  if (imageData && imageData.fromCache && imageData.path) {
+    return imageData.path;
+  }
 
   if (imageData && !imageData.fromCache) {
     return await modifyImage(imageData, imageModifiers);
   }
+
+  if (!imageData) {
+    return undefined;
+  }
+
+
 
   // if (imageData.fromCache) {
   //   return `ALL GOOD! ${imageData.imagePath}`;

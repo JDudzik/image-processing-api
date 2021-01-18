@@ -1,9 +1,9 @@
 import express from 'express';
-import resize from './resize';
+import modifyImage from './modifyImage';
 
 const router = express.Router();
 
-router.get('/resize', resize);
+router.get('/:file', modifyImage);
 
 
 export default router;
