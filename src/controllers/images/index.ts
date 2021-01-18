@@ -1,46 +1,125 @@
 import fs from 'fs';
-// import sharp from 'sharp';
+import sharp from 'sharp';
 
 interface ImageModifiers {
-  width?: number,
-  height?: number,
-  format?: string,
-  quality?: number,
+  width?: string,
+  height?: string,
+  quality?: string,
 };
 
 interface ResolvedImage {
-  imagePath: string | undefined,
-  isCache: boolean,
+  path: string | undefined,
+  pathData: {
+    location: string,
+    fileName: string,
+    fileType: string,
+    modifierString: string,
+  },
+  fromCache: boolean,
 };
 
 
-const resolveImage = async (fileName: string, imageModifiers: ImageModifiers = {}): Promise<ResolvedImage> => {
-  const imagesBasePath = 'images/base';
-  const imagesModifiedPath = 'images/modified';
+const fileExists = async (path: string): Promise<boolean> => await fs.promises.access(path)
+  .then(() => true)
+  .catch(() => false);
 
-  let imagePath = '';
-  fs.promises.access(`${imagesBasePath}/fjord.jpg`)
-    .then(() => {
-      // ... set image and cache value
+const queryValue = (key: string, value: any, isFirst: boolean = false): string => {
+  if (!value) { return ''; }
+  return `${isFirst ? '?' : '&'}${key}=${value}`;
+}
+
+const stringifyModifiers = (imageModifiers: ImageModifiers = {}): string => {
+  return [
+    queryValue('width', imageModifiers.width, true),
+    queryValue('height', imageModifiers.height),
+    queryValue('quality', imageModifiers.quality),
+  ].join('')
+}
+
+
+const modifyImage = (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): any => {
+  const width = imageModifiers.width ? parseInt(imageModifiers.width, 10) : undefined;
+  const height = imageModifiers.height ? parseInt(imageModifiers.height, 10) : undefined;
+  const quality = imageModifiers.quality ? parseInt(imageModifiers.quality, 10) : undefined;
+  const {fileName, fileType, modifierString} = imageData.pathData;
+  const newImagePath = `images/modified/${fileName}${modifierString}.${fileType}`;
+
+  return sharp(imageData.path)
+    .resize(width, height)
+    .jpeg({
+      quality: quality || 75,
+      force: false,
     })
-    .catch((err) => {
-      // run access again, but for base path. If it fails, throw an error that it doesn't exist.
-    });
+    .toFile(newImagePath)
+    .then( data => { console.log('data:', data, newImagePath); })
+}
+
+
+const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Promise<ResolvedImage | undefined> => {
+  const modifiedImages = 'images/modified';
+  const baseImages = 'images/base';
+  const [, fileName, fileType] = file.match(/(.*)\.(\w*)$/) as RegExpMatchArray;
+  const stringifiedModifiers = stringifyModifiers(imageModifiers);
+
+
+  // Attempt to find the image in the modified folder.
+  const modifiedImagePath = `${modifiedImages}/${fileName}${stringifiedModifiers}.${fileType}`;
+  const existsInModified = await fileExists(modifiedImagePath);
+  if (existsInModified) {
+    return {
+      path: modifiedImagePath,
+      pathData: {
+        location: modifiedImages,
+        fileName: fileName,
+        fileType: fileType,
+        modifierString: stringifiedModifiers,
+      },
+      fromCache: true,
+    }
+  }
+
+  // If we don't find the modified image, look for the base instead.
+  const baseImagePath = `${baseImages}/${file}`;
+  const existsInBase = await fileExists(baseImagePath);
+  if (existsInBase) {
+    return {
+      path: baseImagePath,
+      pathData: {
+        location: baseImages,
+        fileName: fileName,
+        fileType: fileType,
+        modifierString: stringifiedModifiers,
+      },
+      fromCache: false,
+    }
+  }
+
+  return undefined;
+}
+
+
+const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): Promise<any> => {
+  const imageData = await findImage(path, imageModifiers);
+  console.log('imageData:', imageData);
+
+  if (imageData && !imageData.fromCache) {
+    return await modifyImage(imageData, imageModifiers);
+  }
+
+  // if (imageData.fromCache) {
+  //   return `ALL GOOD! ${imageData.imagePath}`;
+  // }
+  //
+  // return `hmmm...`;
 
 
   // TODO: Set a maximum width/height
-  // TODO: use fs to find image.
   // TODO: use sharp to modify image if it doesn't already exist.
-
-  return {
-    imagePath: fileName,
-    isCache: false,
-  }
 }
 
 
 
 export default {
+  findImage,
   resolveImage,
-  // modify,
 }
