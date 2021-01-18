@@ -46,13 +46,12 @@ const stringifyModifiers = (imageModifiers: ImageModifiers = {}): string => {
 }
 
 
-const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): Promise<any> => {
+const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): Promise<string> => {
   const width = imageModifiers.width ? parseInt(imageModifiers.width, 10) : undefined;
   const height = imageModifiers.height ? parseInt(imageModifiers.height, 10) : undefined;
   const quality = imageModifiers.quality ? parseInt(imageModifiers.quality, 10) : undefined;
   const {fileName, fileType, modifierString} = imageData.pathData;
   const newImagePath = `images/modified/${fileName}${modifierString}${fileType}`;
-
 
   await sharp(imageData.path)
     .resize(width, height)
@@ -63,7 +62,6 @@ const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifi
     .toFile(newImagePath)
     .catch((err) => { throw new Error(err); })
 
-  console.log('newImagePath:', newImagePath);
   return newImagePath;
 }
 
@@ -117,7 +115,7 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
 }
 
 
-const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): Promise<any> => {
+const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): Promise<string | undefined> => {
   const imageData = await findImage(path, imageModifiers);
 
   if (imageData && imageData.fromCache && imageData.path) {
