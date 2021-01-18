@@ -18,6 +18,7 @@ interface ResolvedImage {
   fromCache: boolean,
 };
 
+const createDirIfNone = (dir: string) => !fs.existsSync(dir) && fs.mkdirSync(dir);
 
 const fileExists = async (path: string): Promise<boolean> => await fs.promises.access(path)
   .then(() => true)
@@ -56,20 +57,20 @@ const modifyImage = (imageData: ResolvedImage, imageModifiers: ImageModifiers = 
 
 
 const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Promise<ResolvedImage | undefined> => {
-  const modifiedImages = 'images/modified';
-  const baseImages = 'images/base';
+  const modifiedDir = 'images/modified';
+  const baseDir = 'images/base';
   const [, fileName, fileType] = file.match(/(.*)\.(\w*)$/) as RegExpMatchArray;
   const stringifiedModifiers = stringifyModifiers(imageModifiers);
 
-
   // Attempt to find the image in the modified folder.
-  const modifiedImagePath = `${modifiedImages}/${fileName}${stringifiedModifiers}.${fileType}`;
+  createDirIfNone(modifiedDir);
+  const modifiedImagePath = `${modifiedDir}/${fileName}${stringifiedModifiers}.${fileType}`;
   const existsInModified = await fileExists(modifiedImagePath);
   if (existsInModified) {
     return {
       path: modifiedImagePath,
       pathData: {
-        location: modifiedImages,
+        location: modifiedDir,
         fileName: fileName,
         fileType: fileType,
         modifierString: stringifiedModifiers,
@@ -79,13 +80,13 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
   }
 
   // If we don't find the modified image, look for the base instead.
-  const baseImagePath = `${baseImages}/${file}`;
+  const baseImagePath = `${baseDir}/${file}`;
   const existsInBase = await fileExists(baseImagePath);
   if (existsInBase) {
     return {
       path: baseImagePath,
       pathData: {
-        location: baseImages,
+        location: baseDir,
         fileName: fileName,
         fileType: fileType,
         modifierString: stringifiedModifiers,
