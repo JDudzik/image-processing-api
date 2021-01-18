@@ -8,15 +8,15 @@ const resize = [
     query: {
       type: "object",
       properties: {
-        width: {type: 'string', pattern: '^\\d*$'}, // All numbers
-        height: {type: 'string', pattern: '^\\d*$'}, // All numbers
-        format: {type: 'string', pattern: '^(?:jpeg|png|webp)$' }, // Only specific words
+        width: {type: 'string', pattern: '^\\d*$'}, // Any numbers
+        height: {type: 'string', pattern: '^\\d*$'}, // Any numbers
         quality: {type: 'string', pattern: '^(100|[1-9][0-9]|[1-9])$'}, // Between 1 and 100
       },
       additionalProperties: false,
     },
   }),
   async (req: express.Request, res: express.Response): Promise<void> => {
+
     const imageData = await images.resolveImage('fjord.jpg', req.query)
       .catch(err => {
         res.status(500);
@@ -33,7 +33,7 @@ const resize = [
     // console.log('foo:', foo);
 
     // res.send(`format: `);
-    res.send();
+    // res.send();
 
     return;
   }
