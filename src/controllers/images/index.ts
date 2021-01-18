@@ -51,7 +51,8 @@ const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifi
   const height = imageModifiers.height ? parseInt(imageModifiers.height, 10) : undefined;
   const quality = imageModifiers.quality ? parseInt(imageModifiers.quality, 10) : undefined;
   const {fileName, fileType, modifierString} = imageData.pathData;
-  const newImagePath = `images/modified/${fileName}${modifierString}.${fileType}`;
+  const newImagePath = `images/modified/${fileName}${modifierString}${fileType}`;
+
 
   await sharp(imageData.path)
     .resize(width, height)
@@ -81,7 +82,7 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
 
   // Attempt to find the image in the modified folder.
   createDirIfNone(modifiedDir);
-  const modifiedImagePath = `${modifiedDir}/${fileName}${stringifiedModifiers}.${fileType}`;
+  const modifiedImagePath = `${modifiedDir}/${fileName}${stringifiedModifiers}${fileType}`;
   const existsInModified = await fileExists(modifiedImagePath);
   if (existsInModified) {
     return {
