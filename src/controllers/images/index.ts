@@ -70,9 +70,9 @@ const modifyImage = async (
   return newImagePath;
 };
 
-/** ****************/
+/* ************** */
 /* Public Methods */
-/** ****************/
+/* ************** */
 
 const findImage = async (
   file: string,
@@ -134,18 +134,7 @@ const resolveImage = async (
     return await modifyImage(imageData, imageModifiers);
   }
 
-  if (!imageData) {
-    return undefined;
-  }
-
-  // if (imageData.fromCache) {
-  //   return `ALL GOOD! ${imageData.imagePath}`;
-  // }
-  //
-  // return `hmmm...`;
-
-  // TODO: Set a maximum width/height
-  // TODO: use sharp to modify image if it doesn't already exist.
+  return undefined;
 };
 
 export default {
