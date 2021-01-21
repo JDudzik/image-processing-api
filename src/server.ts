@@ -14,7 +14,6 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 app.use(express.json());
-app.use(logger('dev'));
 app.use(helmet());
 app.use(compression());
 
@@ -27,6 +26,7 @@ app.get('/', (_req, res) => {
 app.use(catchValidationErrors);
 
 if (process.env.NODE_ENV !== 'test') {
+  app.use(logger('dev'));
   app.listen(port, () => {
     // eslint-disable-next-line no-console
     return console.log(`server is listening on ${port}`);
