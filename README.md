@@ -7,7 +7,7 @@ After cloning the repo, make sure to install necessary packages:<br/>
 Optionally, you can initialize an `.env` file with:<br/>
 `npm run initenv`<br/>
 (**Note**: Remember to configure your new `.env` file, otherwise you may run into errors).<br/>
-Then to start the development server run:<br/>
+Start the development server with:<br/>
 `npm start`<br/>
 
 ## Using the API
@@ -18,8 +18,8 @@ This server exposes a dynamic endpoint that allows you to make modifications to 
 _All endpoints must be prefixed by the the server's base address (eg: localhost:3001)_
 
 ### /v1/images/:image
-**Parameters**:
-`image`: This is the image to be retrieved and modified. You can reference available images in the image library in `images/base`.<br/>
+**Parameters**:<br/>
+`image`: This is the image to be retrieved and modified. You can reference available images in the image library in "images/base".<br/>
 
 **Query Parameters**:<br/>
 _There are several optional query parameters to dictate how the image should be modified._<br/>
