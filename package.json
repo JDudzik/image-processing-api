@@ -12,7 +12,8 @@
     "build:live": "NODE_ENV=development nodemon --watch 'src/**/*.ts' --exec \"ts-node\" src/server.ts",
     "lint": "eslint \"src/**\"",
     "lint:fix": "eslint \"src/**\" --fix",
-    "test": "jest"
+    "test": "jest",
+    "initenv": "cp .env.example .env"
   },
   "repository": {
     "type": "git",
