@@ -1,30 +1,22 @@
 module.exports = {
   clearMocks: true,
-  coveragePathIgnorePatterns: [
-    "<rootDir>/node_modules/(?!@foo)",
-  ],
+  coveragePathIgnorePatterns: ['<rootDir>/node_modules/(?!@foo)'],
   globals: {
-    "ts-jest": {
-      "diagnostics": true,
-      "tsconfig": "tsconfig.json",
-    }
+    'ts-jest': {
+      diagnostics: true,
+      tsconfig: 'tsconfig.json',
+    },
   },
-  moduleFileExtensions: [
-    "ts",
-    "tsx",
-    "js",
-  ],
+  moduleFileExtensions: ['ts', 'tsx', 'js'],
   moduleNameMapper: {
-    "^src(.*)": "<rootDir>/src$1",
-    "^(controllers|tests|utils|v1)(.*)": "<rootDir>/src/$1$2",
+    '^src(.*)': '<rootDir>/src$1',
+    '^((?:controllers|exampleTest|tests|utils|v1)(?:\\/|$).*)$': '<rootDir>/src/$1',
   },
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testRegex: "(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  testRegex: '(/tests/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$',
   transform: {
-    "^.+\\.(t|j)sx?$": "ts-jest",
+    '^.+\\.(t|j)sx?$': 'ts-jest',
   },
-  transformIgnorePatterns: [
-    "<rootDir>/node_modules/(?!@foo)",
-  ],
+  transformIgnorePatterns: ['<rootDir>/node_modules/(?!@foo)'],
 };
