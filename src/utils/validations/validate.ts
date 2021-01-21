@@ -1,18 +1,21 @@
-import Ajv, { ErrorObject } from "ajv";
+import Ajv, { ErrorObject } from 'ajv';
 
-interface AnyObject {[key: string]: any}
+interface AnyObject {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
 
-
-const validate = (data: AnyObject, validationObject: AnyObject): ErrorObject[] | undefined | null => {
+const validate = (
+  data: AnyObject,
+  validationObject: AnyObject,
+): ErrorObject[] | undefined | null => {
   const ajv = new Ajv();
   const validate = ajv.compile(validationObject);
 
   if (validate(data)) {
     return;
-  } else {
-    return validate.errors;
   }
-}
-
+  return validate.errors;
+};
 
 export default validate;

@@ -1,29 +1,32 @@
-
-interface AnyObject {[key: string]: any}
+interface AnyObject {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  [key: string]: any;
+}
 
 interface FailedValidation {
-  status: string,
-  message: string,
+  status: string;
+  message: string;
 }
 
 interface ValidateKeysOptions {
-  requiredKeys?: string[],
-  optionalKeys?: string[],
-  atLeastOneOptional?: boolean,
+  requiredKeys?: string[];
+  optionalKeys?: string[];
+  atLeastOneOptional?: boolean;
 }
-
 
 export const removeKeys = (payload: AnyObject, keys: string[]): AnyObject => {
   const objKeys = Object.keys(payload);
-  const filteredKeys = objKeys.filter(key => !keys.some(prop => key === prop));
+  const filteredKeys = objKeys.filter((key) => !keys.some((prop) => key === prop));
 
   const filteredObject: AnyObject = {};
-  filteredKeys.forEach(key => filteredObject[key] = payload[key]);
+  filteredKeys.forEach((key) => (filteredObject[key] = payload[key]));
   return filteredObject;
 };
 
-
-export const stringMatches = (string: string, matches: string[] = []): FailedValidation | boolean => {
+export const stringMatches = (
+  string: string,
+  matches: string[] = [],
+): FailedValidation | boolean => {
   if (typeof string !== 'string') {
     return {
       status: 'VALUE_IS_NOT_A_STRING',
@@ -44,17 +47,15 @@ export const stringMatches = (string: string, matches: string[] = []): FailedVal
   return false;
 };
 
+export const validateKeys = (
+  payload: AnyObject = {},
+  options: ValidateKeysOptions = {},
+): FailedValidation | boolean => {
+  const { requiredKeys = [], optionalKeys = [], atLeastOneOptional = false } = options;
 
-export const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptions = {}): FailedValidation | boolean => {
-  const {
-    requiredKeys = [],
-    optionalKeys = [],
-    atLeastOneOptional = false,
-  } = options;
-
-  const payloadKeys = Object.keys(payload).filter(key => !!payload[key]);
+  const payloadKeys = Object.keys(payload).filter((key) => !!payload[key]);
   const availableKeys = [...optionalKeys, ...requiredKeys];
-  const allPermitted = payloadKeys.every(key => availableKeys.includes(key));
+  const allPermitted = payloadKeys.every((key) => availableKeys.includes(key));
 
   if (!allPermitted) {
     return {
@@ -63,7 +64,7 @@ export const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptio
     };
   }
 
-  const allRequiredExist = requiredKeys.every(requiredKey => payloadKeys.includes(requiredKey));
+  const allRequiredExist = requiredKeys.every((requiredKey) => payloadKeys.includes(requiredKey));
   if (!allRequiredExist) {
     return {
       status: 'MISSING_REQUIRED_PROPERTY',
@@ -82,11 +83,11 @@ export const validateKeys = (payload: AnyObject = {}, options: ValidateKeysOptio
   return false;
 };
 
-
-export const isNumber = (string: any) => {
-  if (typeof string !== "string") {
+export const isNumber = (string: string): boolean => {
+  if (typeof string !== 'string') {
     return false;
   }
 
-  return !isNaN(string as any) && !isNaN(parseFloat(string))
-}
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  return !isNaN(string as any) && !isNaN(parseFloat(string));
+};

@@ -5,5 +5,4 @@ const router = express.Router();
 
 router.get('/:file', modifyImage);
 
-
 export default router;

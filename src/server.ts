@@ -21,16 +21,16 @@ app.use(compression());
 app.use('/v1', v1);
 
 app.get('/', (_req, res) => {
-  res.send(`Welcome to the Image Processing API!`);
+  res.send('Welcome to the Image Processing API!');
 });
 
 app.use(catchValidationErrors);
 
 if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => {
+    // eslint-disable-next-line no-console
     return console.log(`server is listening on ${port}`);
   });
 }
-
 
 export default app;

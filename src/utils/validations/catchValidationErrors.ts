@@ -1,8 +1,12 @@
 import express from 'express';
 import { ValidationError } from 'express-json-validator-middleware';
 
-
-const catchValidationErrors = (err: express.ErrorRequestHandler, _req: express.Request, res: express.Response, next: express.NextFunction): void => {
+const catchValidationErrors = (
+  err: express.ErrorRequestHandler,
+  _req: express.Request,
+  res: express.Response,
+  next: express.NextFunction,
+): void => {
   if (err instanceof ValidationError) {
     res.status(400);
     res.send({
@@ -13,7 +17,6 @@ const catchValidationErrors = (err: express.ErrorRequestHandler, _req: express.R
   } else {
     next(err);
   }
-}
-
+};
 
 export default catchValidationErrors;

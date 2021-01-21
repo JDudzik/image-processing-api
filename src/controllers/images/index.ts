@@ -2,55 +2,58 @@ import fs from 'fs';
 import sharp from 'sharp';
 
 interface ImageModifiers {
-  width?: string,
-  height?: string,
-  quality?: string,
-};
+  width?: string;
+  height?: string;
+  quality?: string;
+}
 
 interface ResolvedImage {
-  path: string | undefined,
+  path: string | undefined;
   pathData: {
-    location: string,
-    fileName: string,
-    fileType: string,
-    modifierString: string,
-  },
-  fromCache: boolean,
-};
+    location: string;
+    fileName: string;
+    fileType: string;
+    modifierString: string;
+  };
+  fromCache: boolean;
+}
 
-
-/********************/
+/* **************** */
 /* Internal Methods */
-/********************/
+/* **************** */
 
 const createDirIfNone = (dir: string) => !fs.existsSync(dir) && fs.mkdirSync(dir);
 
+const fileExists = async (path: string): Promise<boolean> =>
+  await fs.promises
+    .access(path)
+    .then(() => true)
+    .catch(() => false);
 
-const fileExists = async (path: string): Promise<boolean> => await fs.promises.access(path)
-  .then(() => true)
-  .catch(() => false);
-
-
-const queryValue = (key: string, value: any, isFirst: boolean = false): string => {
-  if (!value) { return ''; }
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+const queryValue = (key: string, value: any, isFirst = false): string => {
+  if (!value) {
+    return '';
+  }
   return `${isFirst ? '?' : '&'}${key}=${value}`;
-}
-
+};
 
 const stringifyModifiers = (imageModifiers: ImageModifiers = {}): string => {
   return [
     queryValue('width', imageModifiers.width, true),
     queryValue('height', imageModifiers.height),
     queryValue('quality', imageModifiers.quality),
-  ].join('')
-}
+  ].join('');
+};
 
-
-const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifiers = {}): Promise<string> => {
+const modifyImage = async (
+  imageData: ResolvedImage,
+  imageModifiers: ImageModifiers = {},
+): Promise<string> => {
   const width = imageModifiers.width ? parseInt(imageModifiers.width, 10) : undefined;
   const height = imageModifiers.height ? parseInt(imageModifiers.height, 10) : undefined;
   const quality = imageModifiers.quality ? parseInt(imageModifiers.quality, 10) : undefined;
-  const {fileName, fileType, modifierString} = imageData.pathData;
+  const { fileName, fileType, modifierString } = imageData.pathData;
   const newImagePath = `images/modified/${fileName}${modifierString}${fileType}`;
 
   await sharp(imageData.path)
@@ -60,18 +63,21 @@ const modifyImage = async (imageData: ResolvedImage, imageModifiers: ImageModifi
       force: false,
     })
     .toFile(newImagePath)
-    .catch((err) => { throw new Error(err); })
+    .catch((err) => {
+      throw new Error(err);
+    });
 
   return newImagePath;
-}
+};
 
-
-
-/******************/
+/** ****************/
 /* Public Methods */
-/******************/
+/** ****************/
 
-const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Promise<ResolvedImage | undefined> => {
+const findImage = async (
+  file: string,
+  imageModifiers: ImageModifiers = {},
+): Promise<ResolvedImage | undefined> => {
   const modifiedDir = 'images/modified';
   const baseDir = 'images/base';
 
@@ -92,7 +98,7 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
         modifierString: stringifiedModifiers,
       },
       fromCache: true,
-    }
+    };
   }
 
   // If we don't find the modified image, look for the base instead.
@@ -108,14 +114,16 @@ const findImage = async (file: string, imageModifiers: ImageModifiers = {}): Pro
         modifierString: stringifiedModifiers,
       },
       fromCache: false,
-    }
+    };
   }
 
   return undefined;
-}
+};
 
-
-const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): Promise<string | undefined> => {
+const resolveImage = async (
+  path: string,
+  imageModifiers: ImageModifiers = {},
+): Promise<string | undefined> => {
   const imageData = await findImage(path, imageModifiers);
 
   if (imageData && imageData.fromCache && imageData.path) {
@@ -130,22 +138,17 @@ const resolveImage = async (path: string, imageModifiers: ImageModifiers = {}): 
     return undefined;
   }
 
-
-
   // if (imageData.fromCache) {
   //   return `ALL GOOD! ${imageData.imagePath}`;
   // }
   //
   // return `hmmm...`;
 
-
   // TODO: Set a maximum width/height
   // TODO: use sharp to modify image if it doesn't already exist.
-}
-
-
+};
 
 export default {
   findImage,
   resolveImage,
-}
+};

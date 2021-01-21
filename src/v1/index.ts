@@ -5,5 +5,4 @@ const router = express.Router();
 
 router.use('/images', images);
 
-
 export default router;
