@@ -75,7 +75,7 @@ export const validateKeys = (
   if (atLeastOneOptional && optionalKeys.length === 0) {
     return {
       status: 'REQUIRES_ONE_OPTIONAL_PROPERTY',
-      message: 'Payload requires at least one property to be declared',
+      message: 'Payload requires at least one optional property to be declared',
     };
   }
 

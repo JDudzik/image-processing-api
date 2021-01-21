@@ -7,7 +7,7 @@ const modifyImage = [
     params: {
       type: 'object',
       properties: {
-        file: { type: 'string', pattern: '^(.+)(\\.\\w+)$' }, // Image file-path. eg: "fjord.jpg"
+        image: { type: 'string', pattern: '^(.+)(\\.\\w+)$' }, // Image file-path. eg: "fjord.jpg"
       },
     },
     query: {
@@ -21,7 +21,7 @@ const modifyImage = [
     },
   }),
   async (req: express.Request, res: express.Response): Promise<void> => {
-    const imagePath = await images.resolveImage(req.params.file, req.query).catch((err) => {
+    const imagePath = await images.resolveImage(req.params.image, req.query).catch((err) => {
       res.status(500);
       res.send({
         status: 'UNKNOWN_ERROR',
@@ -32,8 +32,8 @@ const modifyImage = [
     if (!imagePath) {
       res.status(400);
       res.send({
-        status: 'FILE_DOES_NOT_EXIST',
-        message: `The requested image: ${req.params.file} does not exist`,
+        status: 'IMAGE_DOES_NOT_EXIST',
+        message: `The requested image: ${req.params.image} does not exist`,
       });
       return;
     }

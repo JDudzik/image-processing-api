@@ -3,6 +3,6 @@ import modifyImage from './modifyImage';
 
 const router = express.Router();
 
-router.get('/:file', modifyImage);
+router.get('/:image', modifyImage);
 
 export default router;

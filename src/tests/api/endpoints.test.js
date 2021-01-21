@@ -26,7 +26,7 @@ describe('modifyImage endpoint', () => {
     const response = await request.get('/v1/images/noimage.jpg?height=100');
 
     expect(response.status).toBe(400);
-    expect(response.body.status).toBe('FILE_DOES_NOT_EXIST');
+    expect(response.body.status).toBe('IMAGE_DOES_NOT_EXIST');
 
     done();
   });
